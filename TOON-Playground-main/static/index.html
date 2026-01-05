@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOON Playground - Token-Oriented Object Notation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="logo">TOON Playground</h1>
+                <p class="tagline">Token-Oriented Object Notation - Optimize Your LLM Data</p>
+            </div>
+            <div class="header-stats" id="headerStats">
+                <div class="stat-badge">
+                    <span class="stat-label">Token Savings</span>
+                    <span class="stat-value" id="savingsPercent">--</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Info Banner -->
+        <div class="info-banner">
+            <div class="info-content">
+                <h2>What is TOON?</h2>
+                <p>TOON is a compact, token-efficient data format for LLMs. It combines YAML-like indentation with CSV-style tabular arrays, reducing token usage by <strong>30-60%</strong> compared to JSON while maintaining full compatibility.</p>
+                <div class="feature-grid">
+                    <div class="feature">
+                        <span class="feature-icon">📊</span>
+                        <span>Tabular Arrays</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">🔁</span>
+                        <span>JSON Compatible</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">⚡</span>
+                        <span>40% Fewer Tokens</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">🎯</span>
+                        <span>LLM-Optimized</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Examples Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2>Try Examples</h2>
+                <p>Load pre-built examples to see TOON in action</p>
+            </div>
+            <div class="examples-grid" id="examplesGrid">
+                <div class="skeleton-loader"></div>
+            </div>
+        </div>
+
+        <!-- Input Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2>Input JSON Data</h2>
+                <p>Paste your JSON data below to convert it to TOON, YAML, and see token comparisons</p>
+            </div>
+            <div class="input-container">
+                <div class="editor-header">
+                    <span class="editor-label">JSON Input</span>
+                    <button class="btn-secondary btn-sm" onclick="formatJSON()">Format</button>
+                </div>
+                <textarea 
+                    id="jsonInput" 
+                    class="code-editor" 
+                    placeholder='{"users": [{"id": 1, "name": "Alice"}]}'
+                    rows="12"
+                ></textarea>
+                <div class="editor-footer">
+                    <button class="btn-primary" onclick="convertData()">
+                        <span class="btn-icon">🔄</span>
+                        Convert to All Formats
+                    </button>
+                    <button class="btn-secondary" onclick="clearAll()">Clear</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Section -->
+        <div class="section" id="comparisonSection" style="display: none;">
+            <div class="section-header">
+                <h2>Format Comparison</h2>
+                <p>Compare JSON, YAML, and TOON side by side with token counts</p>
+            </div>
+
+            <!-- Token Comparison Cards -->
+            <div class="token-comparison-grid">
+                <div class="token-card">
+                    <div class="token-card-header">
+                        <h3>JSON</h3>
+                        <span class="format-badge json-badge">Original</span>
+                    </div>
+                    <div class="token-count" id="jsonTokens">-- tokens</div>
+                    <div class="token-bar">
+                        <div class="token-bar-fill json-bar" id="jsonBar"></div>
+                    </div>
+                </div>
+
+                <div class="token-card">
+                    <div class="token-card-header">
+                        <h3>YAML</h3>
+                        <span class="format-badge yaml-badge">Alternative</span>
+                    </div>
+                    <div class="token-count" id="yamlTokens">-- tokens</div>
+                    <div class="token-bar">
+                        <div class="token-bar-fill yaml-bar" id="yamlBar"></div>
+                    </div>
+                    <div class="savings-badge" id="yamlSavings"></div>
+                </div>
+
+                <div class="token-card highlight">
+                    <div class="token-card-header">
+                        <h3>TOON</h3>
+                        <span class="format-badge toon-badge">Optimized</span>
+                    </div>
+                    <div class="token-count" id="toonTokens">-- tokens</div>
+                    <div class="token-bar">
+                        <div class="token-bar-fill toon-bar" id="toonBar"></div>
+                    </div>
+                    <div class="savings-badge success" id="toonSavings"></div>
+                </div>
+            </div>
+
+            <!-- Format Output -->
+            <div class="format-output-grid">
+                <div class="output-panel">
+                    <div class="output-header">
+                        <span class="output-label">JSON</span>
+                        <button class="btn-copy" onclick="copyToClipboard('jsonOutput')">Copy</button>
+                    </div>
+                    <pre class="code-output" id="jsonOutput"></pre>
+                </div>
+
+                <div class="output-panel">
+                    <div class="output-header">
+                        <span class="output-label">YAML</span>
+                        <button class="btn-copy" onclick="copyToClipboard('yamlOutput')">Copy</button>
+                    </div>
+                    <pre class="code-output" id="yamlOutput"></pre>
+                </div>
+
+                <div class="output-panel highlight">
+                    <div class="output-header">
+                        <span class="output-label">TOON</span>
+                        <button class="btn-copy" onclick="copyToClipboard('toonOutput')">Copy</button>
+                    </div>
+                    <pre class="code-output" id="toonOutput"></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- LLM Test Section -->
+        <div class="section" id="llmSection" style="display: none;">
+            <div class="section-header">
+                <h2>Test with OpenAI</h2>
+                <p>Send your data to OpenAI in different formats and compare results</p>
+            </div>
+
+            <div class="llm-test-container">
+                <div class="llm-input">
+                    <div class="prompt-header">
+                        <label class="input-label">Your Question / Prompt</label>
+                        <button class="btn-preset" onclick="loadPresetPrompt()">
+                            <span class="btn-icon">✨</span>
+                            Preset
+                        </button>
+                    </div>
+                    <textarea 
+                        id="llmPrompt" 
+                        class="prompt-input" 
+                        placeholder="e.g., 'List all users with admin role' or 'Calculate the total revenue'"
+                        rows="3"
+                    ></textarea>
+                    
+                    <div class="format-selector">
+                        <label class="input-label">Test Format</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="testFormat" value="json" checked>
+                                <span>JSON</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="testFormat" value="yaml">
+                                <span>YAML</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="testFormat" value="toon">
+                                <span>TOON</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button class="btn-primary" onclick="testWithLLM()">
+                        <span class="btn-icon">🤖</span>
+                        Send to OpenAI
+                    </button>
+                </div>
+
+                <div class="llm-results" id="llmResults" style="display: none;">
+                    <div class="result-header">
+                        <h3>Response</h3>
+                        <div class="result-meta" id="resultMeta"></div>
+                    </div>
+                    <div class="result-content" id="resultContent"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- How It Works Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2>How TOON Works</h2>
+                <p>Understanding the transformation from JSON to TOON</p>
+            </div>
+            
+            <div class="how-it-works">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3>Declare Fields Once</h3>
+                    <p>Instead of repeating field names for each object, TOON declares them once in a header.</p>
+                    <div class="code-comparison">
+                        <div class="comparison-before">
+                            <span class="comparison-label">JSON (Repetitive)</span>
+                            <pre>{"id": 1, "name": "Alice"}
+{"id": 2, "name": "Bob"}</pre>
+                        </div>
+                        <div class="comparison-arrow">→</div>
+                        <div class="comparison-after">
+                            <span class="comparison-label">TOON (Efficient)</span>
+                            <pre>users[2]{id,name}:
+  1,Alice
+  2,Bob</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3>Tabular Format</h3>
+                    <p>Uniform arrays become CSV-like tables with minimal delimiters.</p>
+                    <ul class="feature-list">
+                        <li>✓ 40-60% token reduction</li>
+                        <li>✓ Clearer structure for LLMs</li>
+                        <li>✓ Easier to parse and validate</li>
+                    </ul>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h3>Minimal Syntax</h3>
+                    <p>Reduces quotes, braces, and brackets while maintaining clarity.</p>
+                    <ul class="feature-list">
+                        <li>✓ YAML-like indentation</li>
+                        <li>✓ Optional quotes for simple values</li>
+                        <li>✓ Explicit array lengths [N]</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>About TOON</h3>
+                    <p>Token-Oriented Object Notation is an open format designed to optimize data transfer to LLMs.</p>
+                    <a href="https://github.com/toon-format/spec" target="_blank" class="footer-link">View Specification →</a>
+                </div>
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="https://github.com/toon-format/toon" target="_blank">GitHub</a></li>
+                        <li><a href="https://toonformat.dev" target="_blank">Documentation</a></li>
+                        <li><a href="https://www.npmjs.com/package/@toon-format/toon" target="_blank">NPM Package</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Made with</h3>
+                    <p>FastAPI • Python • UV • OpenAI API</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2025 TOON Playground. Built for developers who care about token efficiency.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
