@@ -1,0 +1,17 @@
+[project]
+name = "toon-playground"
+version = "0.1.0"
+description = "Interactive playground for TOON format comparison and testing"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.104.0",
+    "uvicorn[standard]>=0.24.0",
+    "openai>=1.0.0",
+    "pyyaml>=6.0.1",
+    "python-dotenv>=1.0.0",
+    "tiktoken>=0.5.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
